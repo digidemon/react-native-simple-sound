@@ -13,11 +13,6 @@
   AVAudioPlayer* player;
 }
 
--(NSURL*) soundURL:(NSString*)fileName {
-  return [[NSBundle mainBundle] URLForResource:[[fileName lastPathComponent]stringByDeletingPathExtension]
-                                 withExtension:[fileName pathExtension]];
-}
-
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(enable:(BOOL)enabled) {
@@ -28,7 +23,10 @@ RCT_EXPORT_METHOD(enable:(BOOL)enabled) {
 }
 
 RCT_EXPORT_METHOD(prepare:(NSString *)fileName) {
-  player = [[AVAudioPlayer alloc] initWithContentsOfURL:[self soundURL:fileName] error:nil];
+  // Construct URL to sound file
+  NSString *soundFilePath = [NSString stringWithFormat:@"%@%@", [[NSBundle mainBundle] resourcePath], fileName];
+  NSURL *soundURL = [[NSURL alloc] initFileURLWithPath: soundFilePath];
+  player = [[AVAudioPlayer alloc] initWithContentsOfURL:soundURL error:nil];
   [player prepareToPlay];
 }
 
